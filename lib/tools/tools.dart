@@ -1,8 +1,9 @@
 import 'dart:math';
 
-import 'package:memogame/widgets/itemListNumber.dart';
+import 'package:memogame/widgets/itemlistnumber.dart';
 
 enum StateApp { play, none }
+
 enum StateItemListNumber { complete, verify, none, incorrect }
 
 List<ItemListNumber> shuffleItems(int count, Function() onPress) {

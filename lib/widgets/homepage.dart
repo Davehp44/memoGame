@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:memogame/tools/stringsValues.dart';
+import 'package:memogame/tools/stringsvalues.dart';
 import 'package:memogame/tools/tools.dart';
 import 'package:memogame/widgets/button.dart';
-import 'package:memogame/widgets/itemListNumber.dart';
+import 'package:memogame/widgets/buttonNivelSelect.dart';
+import 'package:memogame/widgets/itemlistnumber.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -24,22 +26,36 @@ class _HomePageState extends State<HomePage> {
         children: [
           if (stateApp == StateApp.none)
             Flexible(
-                flex: 3,
+                flex: 5,
                 child: Container(
                   color: Colors.black12,
-                  child: Center(
-                    child: Text(appName),
+                  child: Column(
+                    children: [
+                      Container(
+                        child: Center(
+                          child: Text(
+                            appName,
+                            style: const TextStyle(
+                                color: Colors.blueAccent, fontSize: 50),
+                          ),
+                        ),
+                        margin: const EdgeInsets.all(30),
+                      ),
+                      Flexible(
+                          child: ButtomNivel(_onPressNivel, reset,
+                              const Icon(Icons.restart_alt), Colors.black26)),
+                    ],
                   ),
                 )),
           if (stateApp == StateApp.play)
             Flexible(
-                flex: 3,
+                flex: 5,
                 child: Container(
                   color: Colors.black12,
                   child: Center(
                     child: GridView.count(
-                      crossAxisCount: 3,
-                      children: List.generate(12, (index) {
+                      crossAxisCount: 5,
+                      children: List.generate(30, (index) {
                         return Center(
                           child: _itemListNumber[index],
                         );
@@ -91,11 +107,11 @@ class _HomePageState extends State<HomePage> {
   void _onPressReset() {
     setState(() {
       _itemListNumber = shuffleItems(
-        12,
+        30,
         _onPressItem,
       );
       for (var element in _itemListNumber) {
-        element.state = StateItemListNumber.none;
+        element.state.value = StateItemListNumber.none;
       }
     });
   }
@@ -106,38 +122,30 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  StateItemListNumber _onPressItem() {
+  void _onPressNivel() {}
+
+  void _onPressItem() {
     ItemListNumber? item1;
     ItemListNumber? item2;
     for (var element in _itemListNumber) {
-      if (element.state == StateItemListNumber.verify && item1 == null) {
+      if (element.state.value == StateItemListNumber.verify && item1 == null) {
         item1 = element;
-      } else if (element.state == StateItemListNumber.verify && item2 == null) {
+      } else if (element.state.value == StateItemListNumber.verify &&
+          item2 == null) {
         item2 = element;
         break;
       }
     }
-
-    StateItemListNumber s = StateItemListNumber.verify;
-    setState(() {
-      if (item1 != null && item2 != null && item1.number == item2.number) {
-        item1.state = StateItemListNumber.complete;
-        item2.state = StateItemListNumber.complete;
-        print(s.name);
-        s = StateItemListNumber.complete;
-      } else if (item1 != null && item2 != null) {
-        item1.state = StateItemListNumber.incorrect;
-        item2.state = StateItemListNumber.incorrect;
-        s = StateItemListNumber.incorrect;
-        print(s.name);
-        // Timer(const Duration(seconds: 1), () {
-        //   item1?.state = StateItemListNumber.none;
-        //   item2?.state = StateItemListNumber.none;
-        //   print("reset to none");
-        // });
-      }
-    });
-
-    return s;
+    if (item1 != null && item2 != null && item1.number == item2.number) {
+      item1.state.value = StateItemListNumber.complete;
+      item2.state.value = StateItemListNumber.complete;
+    } else if (item1 != null && item2 != null) {
+      item1.state.value = StateItemListNumber.incorrect;
+      item2.state.value = StateItemListNumber.incorrect;
+      Timer(const Duration(milliseconds: 500), () {
+        item1?.state.value = StateItemListNumber.none;
+        item2?.state.value = StateItemListNumber.none;
+      });
+    }
   }
 }
