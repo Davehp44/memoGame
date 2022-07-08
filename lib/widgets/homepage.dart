@@ -18,6 +18,34 @@ class _HomePageState extends State<HomePage> {
   StateApp stateApp = StateApp.none;
   List<ItemListNumber> _itemListNumber = [];
 
+  StateAppLevel stateAppLevel = StateAppLevel.easy;
+  late ButtonLevelSelect levelEasy;
+  late ButtonLevelSelect levelMedium;
+  late ButtonLevelSelect levelHard;
+
+  @override
+  void initState() {
+    levelEasy = ButtonLevelSelect(
+        _onPressLevel,
+        easy,
+        const Icon(Icons.earbuds_sharp),
+        StateAppLevel.easy,
+        ValueNotifier(true));
+    levelMedium = ButtonLevelSelect(
+        _onPressLevel,
+        medium,
+        const Icon(Icons.earbuds_battery_sharp),
+        StateAppLevel.medium,
+        ValueNotifier(false));
+    levelHard = ButtonLevelSelect(
+        _onPressLevel,
+        hard,
+        const Icon(Icons.edit_attributes_sharp),
+        StateAppLevel.hard,
+        ValueNotifier(false));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,11 +67,19 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.blueAccent, fontSize: 50),
                           ),
                         ),
-                        margin: const EdgeInsets.all(30),
+                        margin: const EdgeInsets.only(
+                            top: 100, left: 40, right: 40, bottom: 100),
                       ),
-                      Flexible(
-                          child: ButtomNivel(_onPressNivel, reset,
-                              const Icon(Icons.restart_alt), Colors.black26)),
+                      Expanded(
+                        child: Center(
+                          child: Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [levelEasy, levelMedium, levelHard],
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 )),
@@ -122,7 +158,26 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _onPressNivel() {}
+  void _onPressLevel(StateAppLevel? st) {
+    switch (st!) {
+      case StateAppLevel.easy:
+        levelMedium.isActive.value = false;
+        levelHard.isActive.value = false;
+        print(st.name);
+        break;
+      case StateAppLevel.medium:
+        levelEasy.isActive.value = false;
+        levelHard.isActive.value = false;
+        print(st.name);
+        break;
+      case StateAppLevel.hard:
+        levelEasy.isActive.value = false;
+        levelMedium.isActive.value = false;
+        print(st.name);
+        break;
+    }
+    stateAppLevel = st;
+  }
 
   void _onPressItem() {
     ItemListNumber? item1;
