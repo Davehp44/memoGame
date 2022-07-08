@@ -36,7 +36,7 @@ class _ItemListNumber extends State<ItemListNumber> {
             if (widget.state.value == StateItemListNumber.complete) {
               item = Container(
                 color: Colors.green,
-                margin: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(5),
                 child: Center(
                   child: Text(
                     widget.number.toString(),
@@ -58,7 +58,7 @@ class _ItemListNumber extends State<ItemListNumber> {
             } else if (widget.state.value == StateItemListNumber.verify) {
               item = Container(
                 color: Colors.black38,
-                margin: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(5),
                 child: Center(
                   child: Text(
                     widget.number.toString(),
@@ -69,7 +69,7 @@ class _ItemListNumber extends State<ItemListNumber> {
             } else {
               item = Container(
                 color: Colors.black38,
-                margin: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(5),
               );
             }
 

@@ -24,6 +24,10 @@ class _HomePageState extends State<HomePage> {
   late ButtonLevelSelect levelEasy;
   late ButtonLevelSelect levelMedium;
   late ButtonLevelSelect levelHard;
+  Timer? _timer;
+  int _start = 59;
+  int pair = 0;
+  int move = 0;
 
   @override
   void initState() {
@@ -74,11 +78,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Expanded(
                         child: Center(
-                          child: Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [levelEasy, levelMedium, levelHard],
-                            ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [levelEasy, levelMedium, levelHard],
                           ),
                         ),
                       ),
@@ -90,15 +92,61 @@ class _HomePageState extends State<HomePage> {
                 flex: 5,
                 child: Container(
                   color: Colors.black12,
-                  child: Center(
-                    child: GridView.count(
-                      crossAxisCount: columns,
-                      children: List.generate(rows * columns, (index) {
-                        return Center(
-                          child: _itemListNumber[index],
-                        );
-                      }),
-                    ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                          flex: 1,
+                          child: Center(
+                            child: Container(
+                              child: Text(
+                                "$_start",
+                                style: const TextStyle(
+                                    color: Colors.blueAccent, fontSize: 20),
+                              ),
+                              margin: const EdgeInsets.all(10),
+                            ),
+                          )),
+                      Expanded(
+                          flex: 5,
+                          child: Center(
+                            child: GridView.count(
+                              crossAxisCount: columns,
+                              primary: false,
+                              shrinkWrap: true,
+                              children: List.generate(rows * columns, (index) {
+                                return Center(
+                                  child: _itemListNumber[index],
+                                );
+                              }),
+                            ),
+                          )),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: Center(
+                            child: Container(
+                              child: Text(
+                                "Movimientos: $move",
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.blueAccent),
+                              ),
+                              margin: const EdgeInsets.all(5),
+                            ),
+                          )),
+                          Expanded(
+                              child: Center(
+                            child: Container(
+                              child: Text(
+                                "Parejas: $pair",
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.blueAccent),
+                              ),
+                              margin: const EdgeInsets.all(5),
+                            ),
+                          )),
+                        ],
+                      )
+                    ],
                   ),
                 )),
           Flexible(
@@ -152,6 +200,9 @@ class _HomePageState extends State<HomePage> {
         element.state.value = StateItemListNumber.none;
       }
     });
+    startTimer(_start = 59);
+    pair = getPair(rows, columns);
+    move = 0;
   }
 
   void _onPressHome() {
@@ -171,7 +222,7 @@ class _HomePageState extends State<HomePage> {
       case StateAppLevel.medium:
         levelEasy.isActive.value = false;
         levelHard.isActive.value = false;
-        rows = 6;
+        rows = 5;
         columns = 4;
         break;
       case StateAppLevel.hard:
@@ -199,13 +250,48 @@ class _HomePageState extends State<HomePage> {
     if (item1 != null && item2 != null && item1.number == item2.number) {
       item1.state.value = StateItemListNumber.complete;
       item2.state.value = StateItemListNumber.complete;
+      setState(() {
+        pair = pair - 1;
+        move = move + 1;
+      });
     } else if (item1 != null && item2 != null) {
       item1.state.value = StateItemListNumber.incorrect;
       item2.state.value = StateItemListNumber.incorrect;
+      setState(() {
+        move = move + 1;
+      });
       Timer(const Duration(milliseconds: 500), () {
         item1?.state.value = StateItemListNumber.none;
         item2?.state.value = StateItemListNumber.none;
       });
     }
+
+    if (pair == 0) {
+      if (_timer != null) {
+        _timer!.cancel();
+        _timer = null;
+      }
+    }
+  }
+
+  void startTimer(int t) {
+    if (_timer != null) {
+      _timer!.cancel();
+      _timer = null;
+    }
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (Timer timer) => setState(
+        () {
+          if (t < 1) {
+            _start = 59;
+            _onPressReset();
+          } else {
+            _start = t - 1;
+            t = t - 1;
+          }
+        },
+      ),
+    );
   }
 }

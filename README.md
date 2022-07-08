@@ -1,6 +1,6 @@
 # memogame
 
-juego de memoria
+Memory Game 
 
 ## Getting Started
 

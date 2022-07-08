@@ -25,3 +25,7 @@ List<ItemListNumber> shuffleItems(int count, Function() onPress) {
   items.addAll(aux);
   return items.toList()..shuffle();
 }
+
+int getPair(int a, int b) {
+  return (a * b) ~/ 2;
+}
