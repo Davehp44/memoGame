@@ -19,6 +19,8 @@ class _HomePageState extends State<HomePage> {
   List<ItemListNumber> _itemListNumber = [];
 
   StateAppLevel stateAppLevel = StateAppLevel.easy;
+  int rows = 4;
+  int columns = 4;
   late ButtonLevelSelect levelEasy;
   late ButtonLevelSelect levelMedium;
   late ButtonLevelSelect levelHard;
@@ -90,8 +92,8 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.black12,
                   child: Center(
                     child: GridView.count(
-                      crossAxisCount: 5,
-                      children: List.generate(30, (index) {
+                      crossAxisCount: columns,
+                      children: List.generate(rows * columns, (index) {
                         return Center(
                           child: _itemListNumber[index],
                         );
@@ -143,7 +145,7 @@ class _HomePageState extends State<HomePage> {
   void _onPressReset() {
     setState(() {
       _itemListNumber = shuffleItems(
-        30,
+        rows * columns,
         _onPressItem,
       );
       for (var element in _itemListNumber) {
@@ -163,17 +165,20 @@ class _HomePageState extends State<HomePage> {
       case StateAppLevel.easy:
         levelMedium.isActive.value = false;
         levelHard.isActive.value = false;
-        print(st.name);
+        rows = 4;
+        columns = 4;
         break;
       case StateAppLevel.medium:
         levelEasy.isActive.value = false;
         levelHard.isActive.value = false;
-        print(st.name);
+        rows = 6;
+        columns = 4;
         break;
       case StateAppLevel.hard:
         levelEasy.isActive.value = false;
         levelMedium.isActive.value = false;
-        print(st.name);
+        rows = 6;
+        columns = 5;
         break;
     }
     stateAppLevel = st;
