@@ -22,7 +22,7 @@ class _ItemListNumber extends State<ItemListNumber> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (widget.state.value == StateItemListNumber.none) {
+        if (widget.state.value == StateItemListNumber.none && !isFinished) {
           widget.state.value = StateItemListNumber.verify;
           Timer(const Duration(milliseconds: 200), () {
             widget.onPress.call();

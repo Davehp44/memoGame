@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:memogame/tools/stringsvalues.dart';
 import 'package:memogame/tools/tools.dart';
 import 'package:memogame/widgets/button.dart';
 import 'package:memogame/widgets/buttonNivelSelect.dart';
+import 'package:memogame/widgets/dialogfinished.dart';
 import 'package:memogame/widgets/itemlistnumber.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,6 +31,8 @@ class _HomePageState extends State<HomePage> {
   int _start = 59;
   int pair = 0;
   int move = 0;
+  late ConfettiController _controllerBottomCenter;
+  late DialogFinish dialogFinish;
 
   @override
   void initState() {
@@ -49,135 +54,166 @@ class _HomePageState extends State<HomePage> {
         const Icon(Icons.edit_attributes_sharp),
         StateAppLevel.hard,
         ValueNotifier(false));
+    _controllerBottomCenter =
+        ConfettiController(duration: const Duration(seconds: 10));
+    dialogFinish = DialogFinish(StateGameFinished.success);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerBottomCenter.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Column(
+          child: Stack(
         children: [
-          if (stateApp == StateApp.none)
-            Flexible(
-                flex: 5,
-                child: Container(
-                  color: Colors.black12,
-                  child: Column(
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Text(
-                            appName,
-                            style: const TextStyle(
-                                color: Colors.blueAccent, fontSize: 50),
-                          ),
-                        ),
-                        margin: const EdgeInsets.only(
-                            top: 100, left: 40, right: 40, bottom: 100),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [levelEasy, levelMedium, levelHard],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-          if (stateApp == StateApp.play)
-            Flexible(
-                flex: 5,
-                child: Container(
-                  color: Colors.black12,
-                  child: Column(
-                    children: [
-                      Expanded(
-                          flex: 1,
-                          child: Center(
-                            child: Container(
+          Column(
+            children: [
+              if (stateApp == StateApp.none)
+                Flexible(
+                    flex: 5,
+                    child: Container(
+                      color: Colors.black12,
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(
+                                top: 100, left: 40, right: 40, bottom: 100),
+                            child: Center(
                               child: Text(
-                                "$_start",
+                                appName,
                                 style: const TextStyle(
-                                    color: Colors.blueAccent, fontSize: 20),
+                                    color: Colors.blueAccent, fontSize: 50),
                               ),
-                              margin: const EdgeInsets.all(10),
                             ),
-                          )),
-                      Expanded(
-                          flex: 5,
-                          child: Center(
-                            child: GridView.count(
-                              crossAxisCount: columns,
-                              primary: false,
-                              shrinkWrap: true,
-                              children: List.generate(rows * columns, (index) {
-                                return Center(
-                                  child: _itemListNumber[index],
-                                );
-                              }),
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [levelEasy, levelMedium, levelHard],
+                              ),
                             ),
-                          )),
-                      Row(
+                          ),
+                        ],
+                      ),
+                    )),
+              if (stateApp == StateApp.play)
+                Flexible(
+                    flex: 5,
+                    child: Container(
+                      color: Colors.black12,
+                      child: Column(
                         children: [
                           Expanded(
+                              flex: 1,
                               child: Center(
-                            child: Container(
-                              child: Text(
-                                "Movimientos: $move",
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.blueAccent),
-                              ),
-                              margin: const EdgeInsets.all(5),
-                            ),
-                          )),
+                                child: Container(
+                                  margin: const EdgeInsets.all(10),
+                                  child: Text(
+                                    "$_start",
+                                    style: const TextStyle(
+                                        color: Colors.blueAccent, fontSize: 20),
+                                  ),
+                                ),
+                              )),
                           Expanded(
+                              flex: 5,
                               child: Center(
-                            child: Container(
-                              child: Text(
-                                "Parejas: $pair",
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.blueAccent),
-                              ),
-                              margin: const EdgeInsets.all(5),
-                            ),
-                          )),
+                                child: GridView.count(
+                                  crossAxisCount: columns,
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  children:
+                                      List.generate(rows * columns, (index) {
+                                    return Center(
+                                      child: _itemListNumber[index],
+                                    );
+                                  }),
+                                ),
+                              )),
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: Center(
+                                child: Container(
+                                  margin: const EdgeInsets.all(5),
+                                  child: Text(
+                                    "$moves$move",
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.blueAccent),
+                                  ),
+                                ),
+                              )),
+                              Expanded(
+                                  child: Center(
+                                child: Container(
+                                  margin: const EdgeInsets.all(5),
+                                  child: Text(
+                                    "$countPair$pair",
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.blueAccent),
+                                  ),
+                                ),
+                              )),
+                            ],
+                          )
                         ],
-                      )
-                    ],
-                  ),
-                )),
-          Flexible(
-              flex: 1,
-              child: Center(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (stateApp == StateApp.none)
-                      Flexible(
-                          child: Buttom(_onPressPlay, play,
-                              const Icon(Icons.play_arrow), Colors.blueAccent)),
-                    if (stateApp == StateApp.play)
-                      Flexible(
-                          child: Buttom(
-                              _onPressReset,
-                              reset,
-                              const Icon(Icons.restart_alt),
-                              Colors.blueAccent)),
-                    if (stateApp == StateApp.play)
-                      const SizedBox(
-                        width: 10,
                       ),
-                    if (stateApp == StateApp.play)
-                      Flexible(
-                          child: Buttom(_onPressHome, home,
-                              const Icon(Icons.home), Colors.blueAccent)),
-                  ],
-                ),
-              )),
+                    )),
+              Flexible(
+                  flex: 1,
+                  child: Center(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (stateApp == StateApp.none)
+                          Flexible(
+                              child: Buttom(
+                                  _onPressPlay,
+                                  play,
+                                  const Icon(Icons.play_arrow),
+                                  Colors.blueAccent)),
+                        if (stateApp == StateApp.play)
+                          Flexible(
+                              child: Buttom(
+                                  _onPressReset,
+                                  reset,
+                                  const Icon(Icons.restart_alt),
+                                  Colors.blueAccent)),
+                        if (stateApp == StateApp.play)
+                          const SizedBox(
+                            width: 10,
+                          ),
+                        if (stateApp == StateApp.play)
+                          Flexible(
+                              child: Buttom(_onPressHome, home,
+                                  const Icon(Icons.home), Colors.blueAccent)),
+                      ],
+                    ),
+                  )),
+            ],
+          ),
+          if (isFinished) dialogFinish,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ConfettiWidget(
+              confettiController: _controllerBottomCenter,
+              blastDirection: -pi / 2,
+              emissionFrequency: 0.01,
+              numberOfParticles: 20,
+              maxBlastForce: 100,
+              shouldLoop: false,
+              minBlastForce: 80,
+              gravity: 0.3,
+            ),
+          ),
         ],
       )), // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -186,8 +222,8 @@ class _HomePageState extends State<HomePage> {
   void _onPressPlay() {
     setState(() {
       stateApp = StateApp.play;
+      _onPressReset();
     });
-    _onPressReset();
   }
 
   void _onPressReset() {
@@ -199,15 +235,23 @@ class _HomePageState extends State<HomePage> {
       for (var element in _itemListNumber) {
         element.state.value = StateItemListNumber.none;
       }
+      startTimer(_start = 59);
+      pair = getPair(rows, columns);
+      move = 0;
+      _controllerBottomCenter.stop();
+      isFinished = false;
     });
-    startTimer(_start = 59);
-    pair = getPair(rows, columns);
-    move = 0;
   }
 
   void _onPressHome() {
     setState(() {
       stateApp = StateApp.none;
+      _controllerBottomCenter.stop();
+      isFinished = false;
+      if (_timer != null) {
+        _timer!.cancel();
+        _timer = null;
+      }
     });
   }
 
@@ -271,6 +315,9 @@ class _HomePageState extends State<HomePage> {
         _timer!.cancel();
         _timer = null;
       }
+      _controllerBottomCenter.play();
+      dialogFinish.stateGameFinishedFinish = StateGameFinished.success;
+      isFinished = true;
     }
   }
 
@@ -284,8 +331,11 @@ class _HomePageState extends State<HomePage> {
       (Timer timer) => setState(
         () {
           if (t < 1) {
-            _start = 59;
-            _onPressReset();
+            _start = 0;
+            dialogFinish.stateGameFinishedFinish = StateGameFinished.fail;
+            isFinished = true;
+            _timer!.cancel();
+            _timer = null;
           } else {
             _start = t - 1;
             t = t - 1;

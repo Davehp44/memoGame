@@ -2,7 +2,11 @@ import 'dart:math';
 
 import 'package:memogame/widgets/itemlistnumber.dart';
 
+bool isFinished = false;
+
 enum StateApp { play, none }
+
+enum StateGameFinished { fail, success }
 
 enum StateAppLevel { easy, medium, hard }
 

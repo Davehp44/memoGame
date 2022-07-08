@@ -5,3 +5,7 @@ String home = "Inicio";
 String easy = "Fácil";
 String medium = "Medio";
 String hard = "Difícil";
+String congratulation = "¡Felicidades!";
+String failGame = "¡¡¡UPS!!!";
+String moves = "Movimiento: ";
+String countPair = "Parejas: ";
