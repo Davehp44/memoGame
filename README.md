@@ -1,6 +1,6 @@
 # memogame
 
-Memory Game 
+MemoGame, a simple number memory game.
 
 ## Getting Started
 
